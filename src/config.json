@@ -1,0 +1,28 @@
+{
+    "file_configs": {
+        "file": {
+            "color": [144, 164, 174],
+            "icon": ""
+        },
+        "directory": {
+            "color": [144, 164, 174],
+            "icon": "󰉋"
+        },
+        "lock": {
+            "color": [255, 213, 79],
+            "icon": "\udb80\udf3e"
+        },
+        ".gitignore": {
+            "color": [230, 74, 25],
+            "icon": "\ue702"
+        },
+        "toml": {
+            "color": [230, 74, 25],
+            "icon": "\ue6b2"
+        },
+        "md": {
+            "color": [66, 165, 245],
+            "icon": "\udb80\udefc"
+        }
+    }
+}
