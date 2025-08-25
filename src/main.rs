@@ -1,4 +1,4 @@
-use std::{collections::HashMap, ffi::OsStr, io::Read, str::FromStr};
+use std::{collections::HashMap, ffi::OsStr, io::Read, process::exit, str::FromStr};
 
 use colored::Colorize;
 use serde::{Serialize, Deserialize};
@@ -91,7 +91,15 @@ fn list_directory_contents(config: &ProgramConfig) -> std::io::Result<()> {
 }
 fn main() {
 
-    let read = read_config_data("D:/dev/rust/list-directory-rust/src/config.json");
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() != 3 {
+
+        exit(1);
+    } 
+
+    let config_path = &args[2];  
+
+    let read = read_config_data(config_path);
     match read {
         Err(_e) => println!("error reading file"),
         Ok(v) => {

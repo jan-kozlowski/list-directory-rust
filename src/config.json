@@ -2,11 +2,11 @@
     "file_configs": {
         "file": {
             "color": [144, 164, 174],
-            "icon": ""
+            "icon": "\uea7b"
         },
         "directory": {
             "color": [144, 164, 174],
-            "icon": "󰉋"
+            "icon": "\uf4d4"
         },
         "lock": {
             "color": [255, 213, 79],
@@ -35,6 +35,18 @@
         "exe": {
             "color": [230, 74, 25],
             "icon": "\uf489"
+        },
+        "txt": {
+            "color": [230, 74, 25],
+            "icon": "\uf0f6"
+        },
+        "png": {
+            "color": [0, 173, 155],
+            "icon": "\uf03e"
+        },
+        "jpg": {
+            "color": [0, 173, 155],
+            "icon": "\uf03e"
         }
     }
 }
