@@ -1,0 +1,71 @@
+[default_file_config]
+color = "#90A4AE"
+icon = ""
+
+[default_dir_config]
+color = "#DD9623"
+icon = ""
+
+[file_configs.jpg]
+color = "#00AD9B"
+icon = ""
+
+[file_configs.yaml]
+color = "#EF5350"
+icon = "󰈙"
+
+[file_configs.md]
+color = "#42A5F5"
+icon = "󰋼"
+
+[file_configs.".gitignore"]
+color = "#E64A19"
+icon = ""
+
+[file_configs.jar]
+color = "#F44336"
+icon = ""
+
+[file_configs.txt]
+color = "#42A5F5"
+icon = ""
+
+[file_configs.o]
+color = "#27A2DA"
+icon = "󰆧"
+
+[file_configs.png]
+color = "#00AD9B"
+icon = ""
+
+[file_configs.json]
+color = "#DD9623"
+icon = ""
+
+[file_configs.rust]
+color = "#FF7043"
+icon = ""
+
+[file_configs.yml]
+color = "#EF5350"
+icon = "󰈙"
+
+[file_configs.pdf]
+color = "#EF5350"
+icon = ""
+
+[file_configs.java]
+color = "#F44336"
+icon = "󰅶"
+
+[file_configs.exe]
+color = "#E64A19"
+icon = ""
+
+[file_configs.lock]
+color = "#FFD54F"
+icon = "󰌾"
+
+[file_configs.toml]
+color = "#E64A19"
+icon = ""

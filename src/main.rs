@@ -1,29 +1,8 @@
-use std::{collections::HashMap, ffi::OsStr, io::Read, process::exit, str::FromStr};
-
+use std::{ffi::OsStr, io::{Read, Write}};
 use colored::Colorize;
-use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize)]
-struct FileConfig {
-
-    // r, g, b
-    color: [u8; 3],
-    icon: char,
-}
-
-impl FileConfig {
-
-    pub fn get_color(&self) -> colored::CustomColor {
-
-        colored::CustomColor::new(self.color[0], self.color[1], self.color[2])
-    }
-}
-
-#[derive(Serialize, Deserialize)]
-struct ProgramConfig {
-
-    file_configs: HashMap<String, FileConfig>,
-}
+mod config;
+use config::*;
 
 /*
     if file begins with '.', returns the complete file name
@@ -61,86 +40,86 @@ fn list_directory_contents(config: &ProgramConfig) -> std::io::Result<()> {
     // directories.sort();
     // files.sort();
 
-    let default_dir_config = &FileConfig{
-        color: [144, 164, 174],
-        icon: ''
-    };
-
-    let default_file_config = &FileConfig{
-        color: [144, 164, 174],
-        icon: ''
-    };
-
-    let directory_config = config.file_configs.get("directory").unwrap_or(default_dir_config);
+    let directory_config = config.get_config("directory");
 
     for os_string in directories {
             
-        let color = directory_config.get_color();
-        print(directory_config.get_color(), directory_config.icon, os_string.into_string().unwrap_or(String::new()));
+        print(directory_config, os_string.into_string().unwrap_or(String::new()));
     }
+
     for os_string in files {
             
         let extension = get_extension_from_string(&os_string).to_str()
-                                    .unwrap_or("none").to_string();
-        let file_config = config.file_configs.get(&extension).unwrap_or(default_file_config);
+                                    .unwrap_or("default").to_string();
+        let file_config = config.get_config(&extension);
 
-        print(file_config.get_color(), file_config.icon, os_string.into_string().unwrap_or(String::new()));
+        print(file_config, os_string.into_string().unwrap_or(String::new()));
     }
 
     Ok(())
 }
 fn main() {
 
+    let program_config = get_config_data();
+
+    match list_directory_contents(&program_config) {
+        Ok(_v) => {},
+        Err(e) => println!("Failed to read directory: {}", e)
+    }
+}
+
+fn save_config(config: &ProgramConfig) -> std::io::Result<()> {
+
+    let res = toml::to_string(&config).unwrap_or_default();
+    print!("{}", res);
+    let mut f = std::fs::File::create("./src/theme.toml")?;
+    f.write_all(res.as_bytes())?;
+    // let mut f = std::fs::File::options().write(true).open("src/theme.toml")?;
+    // f.write(res.as_bytes())?;
+    // let y = std::fs::write("/themes/default.toml", res);
+    
+    Ok(())
+}
+
+fn print(file_config: &FileConfig, file_name: String) {
+
+    let color = file_config.get_color();
+    let icon_string = file_config.get_icon().to_string().custom_color(color);
+    let file_name_string = file_name.custom_color(color);
+    println!("{}  {}", icon_string, file_name_string);
+}
+
+fn get_config_data() -> ProgramConfig {
+    
     let args: Vec<String> = std::env::args().collect();
-    if args.len() != 3 {
+    let config_path = args.get(2);  
+    match config_path {
+        None => ProgramConfig::default(),
+        Some(path) => {
 
-        exit(1);
-    } 
+            let read = read_config_file(path);
+            match read {
+                Err(e) => {
 
-    let config_path = &args[2];  
+                    println!("error reading config file: {}", e);
+                    ProgramConfig::default()
+                },
+                Ok(v) => {
 
-    let read = read_config_data(config_path);
-    match read {
-        Err(_e) => println!("error reading file"),
-        Ok(v) => {
-
-            let program_config: ProgramConfig = serde_json::from_str(v.as_str()).unwrap();
-            
-            match list_directory_contents(&program_config) {
-                Ok(_v) => {},
-                Err(_e) => println!("Failed to read directory")
+                    match toml::from_str(v.as_str()) {
+                        Err(e) => {
+                            println!("error parsing config file: {}", e);
+                            ProgramConfig::default()
+                        },
+                        Ok(v) => v
+                    }
+                }
             }
         }
     }
 }
 
-fn print(color: colored::CustomColor, icon: char, file_name: String) {
-
-    let icon_string = icon.to_string().custom_color(color);
-    let file_name_string = file_name.custom_color(color);
-    println!("{}  {}", icon_string, file_name_string);
-}
-
-fn serialize(pc: &ProgramConfig) -> serde_json::Result<()> {
-
-    let fc = &pc.file_configs;
-
-    for x in fc {
-
-        let config = x.1;
-        let color = colored::CustomColor::new(
-            config.color[0], config.color[1], config.color[2]);
-        println!("{}:", x.0);
-        println!("  icon: {}", String::from(config.icon).custom_color(color));
-    }
-
-    let s = serde_json::to_string(&pc)?;
-    println!("{}", s);
-
-    Ok(())
-}
-
-fn read_config_data(config_path: &str) -> std::io::Result<String> {
+fn read_config_file(config_path: &str) -> std::io::Result<String> {
 
     let mut config_file = std::fs::File::open(config_path)?;
     let mut buffer = String::new();

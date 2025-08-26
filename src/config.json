@@ -1,52 +1,76 @@
 {
+    "default_file_config": {
+        "color": "#90A4AE",
+        "icon": ""
+    },
+    "default_dir_config": {
+        "color": "#a76502",
+        "icon": ""
+    },
     "file_configs": {
-        "file": {
-            "color": [144, 164, 174],
-            "icon": "\uea7b"
+        "pdf": {
+            "color": "#EF5350",
+            "icon": ""
         },
-        "directory": {
-            "color": [144, 164, 174],
-            "icon": "\uf4d4"
+        "yaml": {
+            "color": "#EF5350",
+            "icon": "󰈙"
+        },
+        "yml": {
+            "color": "#EF5350",
+            "icon": "󰈙"
         },
         "lock": {
-            "color": [255, 213, 79],
-            "icon": "\udb80\udf3e"
+            "color": "#FFD54F",
+            "icon": "󰌾"
         },
         ".gitignore": {
-            "color": [230, 74, 25],
-            "icon": "\ue702"
+            "color": "#E64A19",
+            "icon": ""
         },
         "toml": {
-            "color": [230, 74, 25],
-            "icon": "\ue6b2"
+            "color": "#E64A19",
+            "icon": ""
         },
         "md": {
-            "color": [66, 165, 245],
-            "icon": "\udb80\udefc"
+            "color": "#42A5F5",
+            "icon": "󰋼"
         },
         "java": {
-            "color": [244, 67, 54],
-            "icon": "\ue738"
+            "color": "#F44336",
+            "icon": "󰅶"
+        },
+        "jar": {
+            "color": "#F44336",
+            "icon": ""
         },
         "rust": {
-            "color": [255, 112, 67],
-            "icon": "\ue7a8"
+            "color": "#FF7043",
+            "icon": ""
         },
         "exe": {
-            "color": [230, 74, 25],
-            "icon": "\uf489"
+            "color": "#E64A19",
+            "icon": ""
         },
         "txt": {
-            "color": [230, 74, 25],
-            "icon": "\uf0f6"
+            "color": "#42A5F5",
+            "icon": ""
         },
         "png": {
-            "color": [0, 173, 155],
-            "icon": "\uf03e"
+            "color": "#00AD9B",
+            "icon": ""
         },
         "jpg": {
-            "color": [0, 173, 155],
-            "icon": "\uf03e"
+            "color": "#00AD9B",
+            "icon": ""
+        },
+        "o": {
+            "color": "#27A2DA",
+            "icon": "󰆧"
+        },
+        "json": {
+            "color": "#DD9623",
+            "icon": ""
         }
     }
 }
