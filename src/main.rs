@@ -1,4 +1,4 @@
-use std::{ffi::OsStr, io::{Read, Write}};
+use std::{ffi::OsStr, fmt::format, io::Read, path::PathBuf};
 use colored::Colorize;
 
 mod config;
@@ -14,10 +14,14 @@ fn get_extension_from_string(file_name: &OsStr) -> &OsStr {
     extension
 }
 
-fn list_directory_contents(config: &ProgramConfig) -> std::io::Result<()> {
+fn list_directory_contents(config: &ProgramConfig, current_dir: PathBuf, depth: u8) -> std::io::Result<()> {
 
-    let current_dir = std::env::current_dir()?;
-    let dir = std::fs::read_dir(current_dir)?;
+    if depth > config.get_depth() {
+
+        return Ok(());
+    }
+
+    let dir = std::fs::read_dir(&current_dir)?;
     let mut directories = Vec::new();
     let mut files = Vec::new();
 
@@ -26,7 +30,7 @@ fn list_directory_contents(config: &ProgramConfig) -> std::io::Result<()> {
         let entry = dir_entry?;
         let file_name = entry.file_name();
         let file_type = entry.file_type()?;
-        
+
         if file_type.is_dir() {
 
             directories.push(file_name);
@@ -36,24 +40,28 @@ fn list_directory_contents(config: &ProgramConfig) -> std::io::Result<()> {
             files.push(file_name);
         }
     }
-
+    
     // directories.sort();
     // files.sort();
 
     let directory_config = config.get_config("directory");
 
-    for os_string in directories {
+    for dir_name in directories {
             
-        print(directory_config, os_string.into_string().unwrap_or(String::new()));
+        print(directory_config, &dir_name, depth);
+
+        let new_dir = format!("{}/{}", current_dir.display(), dir_name.display());
+
+        let _ = list_directory_contents(config, PathBuf::from(new_dir), depth + 1);
     }
 
-    for os_string in files {
+    for file_name in files {
             
-        let extension = get_extension_from_string(&os_string).to_str()
+        let extension = get_extension_from_string(&file_name).to_str()
                                     .unwrap_or("default").to_string();
         let file_config = config.get_config(&extension);
 
-        print(file_config, os_string.into_string().unwrap_or(String::new()));
+        print(file_config, &file_name, depth);
     }
 
     Ok(())
@@ -61,32 +69,26 @@ fn list_directory_contents(config: &ProgramConfig) -> std::io::Result<()> {
 fn main() {
 
     let program_config = get_config_data();
+    let current_dir = std::env::current_dir().unwrap_or(PathBuf::from("./"));
 
-    match list_directory_contents(&program_config) {
+    match list_directory_contents(&program_config, current_dir, 0) {
         Ok(_v) => {},
         Err(e) => println!("Failed to read directory: {}", e)
     }
 }
 
-fn save_config(config: &ProgramConfig) -> std::io::Result<()> {
-
-    let res = toml::to_string(&config).unwrap_or_default();
-    print!("{}", res);
-    let mut f = std::fs::File::create("./src/theme.toml")?;
-    f.write_all(res.as_bytes())?;
-    // let mut f = std::fs::File::options().write(true).open("src/theme.toml")?;
-    // f.write(res.as_bytes())?;
-    // let y = std::fs::write("/themes/default.toml", res);
-    
-    Ok(())
-}
-
-fn print(file_config: &FileConfig, file_name: String) {
+fn print(file_config: &FileConfig, file_name: &OsStr, depth: u8) {
 
     let color = file_config.get_color();
-    let icon_string = file_config.get_icon().to_string().custom_color(color);
-    let file_name_string = file_name.custom_color(color);
-    println!("{}  {}", icon_string, file_name_string);
+    let line = if depth == 0 
+    {
+        format!(" {}  {}", file_config.get_icon(), file_name.display())
+    } else {
+        let s = "--".repeat(depth as usize);
+        format!(" |{} {}  {}", s, file_config.get_icon(), file_name.display())
+    };
+
+    println!("{}", line.custom_color(color));
 }
 
 fn get_config_data() -> ProgramConfig {

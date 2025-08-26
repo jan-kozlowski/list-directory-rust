@@ -44,6 +44,7 @@ impl FileConfig {
 #[derive(Serialize, Deserialize)]
 pub struct ProgramConfig {
 
+    depth: u8,
     default_file_config: FileConfig,
     default_dir_config: FileConfig,
     file_configs: HashMap<String, FileConfig>,
@@ -54,8 +55,9 @@ impl Default for ProgramConfig {
     fn default() -> Self {
         
         Self {
+            depth: 0,
             default_file_config: FileConfig::default(),
-            default_dir_config: FileConfig::new("#90A4AE", '\u{f4d4}'),
+            default_dir_config: FileConfig::new("#DD9623", '\u{f4d4}'),
             file_configs: HashMap::new()
         }
     }
@@ -72,16 +74,20 @@ impl ProgramConfig {
                 else 
                     { &self.default_file_config })
     }
+
+    pub fn get_depth(&self) -> u8 {
+
+        self.depth
+    }
 } 
 
-pub fn hex_to_color(hex_color: &str) -> colored::CustomColor {
+fn hex_to_color(hex_color: &str) -> colored::CustomColor {
 
     let hex_value = hex_color.trim_start_matches("#");
 
     if hex_value.len() < 6 {
 
-        println!("bad color");
-        return colored::CustomColor::new(255, 255, 255);
+        return hex_to_color(&FileConfig::default().color);
     }
 
     let r = u8::from_str_radix(&hex_value[0..2], 16).unwrap_or(255);
